@@ -22,14 +22,14 @@ const levelCount = 5;
 
 // Load player image
 const playerImage = new Image();
-playerImage.src = 'player.jpg';
+playerImage.src = 'pulka-game/player.jpg';
 
 // Load bullet image
 const bulletImage = new Image();
-bulletImage.src = 'bullet.png';
+bulletImage.src = 'pulka-game/bullet.png';
 
 const finishImage = new Image();
-finishImage.src = 'finish.png';
+finishImage.src = 'pulka-game/finish.png';
 
 // Calculate new dimensions
 const originalWidth = 520;
