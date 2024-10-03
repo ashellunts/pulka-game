@@ -38,6 +38,14 @@ const scaleFactor = 1/25;
 const playerWidth = originalWidth * scaleFactor;
 const playerHeight = originalHeight * scaleFactor;
 
+// Track the state of arrow keys
+const keys = {
+  ArrowUp: false,
+  ArrowDown: false,
+  ArrowLeft: false,
+  ArrowRight: false
+};
+
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -61,32 +69,24 @@ function handleKeyDown(e) {
     }
   }
 
-  if (waitforNextLevel)
-  {
-    if (e.key === 's' && currentLevel <= levelCount)
-    {
+  if (waitforNextLevel) {
+    if (e.key === 's' && currentLevel <= levelCount) {
       waitforNextLevel = false;
       startLevel();
-      requestAnimationFrame(gameLoop)
+      requestAnimationFrame(gameLoop);
       return;
     }
     return;
   }
 
-  const speed = 15;
-  switch(e.key) {
-    case 'ArrowUp':
-      playerPos.y = Math.max(0, playerPos.y - speed);
-      break;
-    case 'ArrowDown':
-      playerPos.y = Math.min(canvasSize.height - playerHeight, playerPos.y + speed);
-      break;
-    case 'ArrowLeft':
-      playerPos.x = Math.max(0, playerPos.x - speed);
-      break;
-    case 'ArrowRight':
-      playerPos.x = Math.min(canvasSize.width - playerWidth, playerPos.x + speed);
-      break;
+  if (keys.hasOwnProperty(e.key)) {
+    keys[e.key] = true;
+  }
+}
+
+function handleKeyUp(e) {
+  if (keys.hasOwnProperty(e.key)) {
+    keys[e.key] = false;
   }
 }
 
@@ -111,6 +111,21 @@ function startLevel() {
 
 function gameLoop(timestamp) {
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
+
+  // Update player position based on keys pressed
+  const speed = 5;
+  if (keys.ArrowUp) {
+    playerPos.y = Math.max(0, playerPos.y - speed);
+  }
+  if (keys.ArrowDown) {
+    playerPos.y = Math.min(canvasSize.height - playerHeight, playerPos.y + speed);
+  }
+  if (keys.ArrowLeft) {
+    playerPos.x = Math.max(0, playerPos.x - speed);
+  }
+  if (keys.ArrowRight) {
+    playerPos.x = Math.min(canvasSize.width - playerWidth, playerPos.x + speed);
+  }
 
   // Draw goal
   ctx.fillStyle = 'green';
@@ -190,6 +205,7 @@ function gameLoop(timestamp) {
 }
 
 window.addEventListener('keydown', handleKeyDown);
+window.addEventListener('keyup', handleKeyUp);
 window.addEventListener('resize', resizeCanvas);
 
 resizeCanvas();
