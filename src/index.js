@@ -101,6 +101,8 @@ function startLevel() {
   lastBulletTime = 0;
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
   ctx.fillStyle = 'black';
+  ctx.font = '80px Arial';
+  ctx.fillText('Pulka', canvasSize.width / 2 - 120, 100);
   ctx.font = '30px Arial';
   ctx.fillText(`Level ${currentLevel}`, canvasSize.width / 2 - 70, canvasSize.height / 2);
   ctx.font = '20px Arial';
