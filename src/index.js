@@ -14,8 +14,8 @@ let gameWon = false;
 let gameLost = false;
 let bullets = [];
 let lastBulletTime = 0;
-const goalWidth = 40;
-const goalHeight = 100;
+const goalWidth = 100;
+const goalHeight = 95;
 let waitforNextLevel = true;
 
 const levelCount = 5;
@@ -27,6 +27,9 @@ playerImage.src = 'player.jpg';
 // Load bullet image
 const bulletImage = new Image();
 bulletImage.src = 'bullet.png';
+
+const finishImage = new Image();
+finishImage.src = 'finish.png';
 
 // Calculate new dimensions
 const originalWidth = 520;
@@ -101,7 +104,7 @@ function startLevel() {
   ctx.font = '30px Arial';
   ctx.fillText(`Level ${currentLevel}`, canvasSize.width / 2 - 70, canvasSize.height / 2);
   ctx.font = '20px Arial';
-  ctx.fillText('Press (s) to start the level', canvasSize.width / 2 - 100, canvasSize.height / 2 + 40);
+  ctx.fillText('Press (s) to start the level', canvasSize.width / 2 - 125, canvasSize.height / 2 + 40);
 }
 
 function gameLoop(timestamp) {
@@ -109,7 +112,10 @@ function gameLoop(timestamp) {
 
   // Draw goal
   ctx.fillStyle = 'green';
-  ctx.fillRect(canvasSize.width - goalWidth, (canvasSize.height - goalHeight) / 2, goalWidth, goalHeight);
+  // ctx.fillRect(canvasSize.width - goalWidth, (canvasSize.height - goalHeight) / 2, goalWidth, goalHeight);
+
+  // Draw finish line
+  ctx.drawImage(finishImage, canvasSize.width - goalWidth, (canvasSize.height - goalHeight) / 2, goalWidth, goalHeight);
 
   // Draw level in up left corner
   ctx.fillStyle = 'black';
@@ -152,7 +158,7 @@ function gameLoop(timestamp) {
     if (currentLevel > levelCount) {
       // Game completed
       ctx.fillText('You Win! 🎉', canvasSize.width / 2 - 70, canvasSize.height / 2);
-      ctx.fillText('Press (r) to restart the game', canvasSize.width / 2 - 100, canvasSize.height / 2 + 40);
+      ctx.fillText('Press (r) to restart the game', canvasSize.width / 2 - 170, canvasSize.height / 2 + 40);
     } else {
 
       if (currentLevel === 2) {
@@ -173,7 +179,7 @@ function gameLoop(timestamp) {
     ctx.fillStyle = 'black';
     ctx.font = '30px Arial';
     ctx.fillText('You Lose! 💥', canvasSize.width / 2 - 70, canvasSize.height / 2);
-    ctx.fillText('Press (r) to restart the game', canvasSize.width / 2 - 100, canvasSize.height / 2 + 40);
+    ctx.fillText('Press (r) to restart the game', canvasSize.width / 2 - 170, canvasSize.height / 2 + 40);
   }
 
   if (!gameWon && !gameLost && !waitforNextLevel) {
