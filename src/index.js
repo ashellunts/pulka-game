@@ -145,7 +145,7 @@ function updatePlayerDirection(x, y) {
 let currentLevel = 1;
 let newBulletMilliseconds = 1000; // Level 1
 
-if (navigator.userAgentData.mobile) {
+if (navigator.userAgentData && navigator.userAgentData.mobile) {
   newBulletMilliseconds = newBulletMilliseconds / 2;
 }
 
@@ -252,7 +252,7 @@ function gameLoop(timestamp) {
         newBulletMilliseconds = 230;
       }
 
-      if (navigator.userAgentData.mobile) {
+      if (navigator.userAgentData && navigator.userAgentData.mobile) {
         newBulletMilliseconds = newBulletMilliseconds / 2;
       }
 
@@ -294,7 +294,7 @@ function showStartButton() {
     waitforNextLevel = false;
     startButton.remove();
     requestAnimationFrame(gameLoop);
-    if (navigator.userAgentData.mobile) {
+    if (navigator.userAgentData && navigator.userAgentData.mobile) {
       requestFullscreen();
     }
   });
@@ -319,7 +319,7 @@ function showRestartButton() {
     lastBulletTime = 0;
     currentLevel = 1; // Reset to level 1
     newBulletMilliseconds = 1000; // Reset bullet interval
-    if (navigator.userAgentData.mobile) {
+    if (navigator.userAgentData && navigator.userAgentData.mobile) {
       newBulletMilliseconds = newBulletMilliseconds / 2;
     }
     resizeCanvas(); // Reset canvas size if needed
