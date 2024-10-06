@@ -46,6 +46,9 @@ const keys = {
   ArrowRight: false
 };
 
+let isTouching = false;
+let isMouseDown = false;
+
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -65,6 +68,7 @@ function handleKeyUp(e) {
 }
 
 function handleTouchStart(e) {
+  isTouching = true;
   const touch = e.touches ? e.touches[0] : e;
   const touchX = touch.clientX;
   const touchY = touch.clientY;
@@ -73,14 +77,42 @@ function handleTouchStart(e) {
 }
 
 function handleTouchMove(e) {
-  const touch = e.touches ? e.touches[0] : e;
-  const touchX = touch.clientX;
-  const touchY = touch.clientY;
+  if (isTouching) {
+    const touch = e.touches ? e.touches[0] : e;
+    const touchX = touch.clientX;
+    const touchY = touch.clientY;
 
-  updatePlayerDirection(touchX, touchY);
+    updatePlayerDirection(touchX, touchY);
+  }
 }
 
 function handleTouchEnd(e) {
+  isTouching = false;
+  keys.ArrowUp = false;
+  keys.ArrowDown = false;
+  keys.ArrowLeft = false;
+  keys.ArrowRight = false;
+}
+
+function handleMouseDown(e) {
+  isMouseDown = true;
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+
+  updatePlayerDirection(mouseX, mouseY);
+}
+
+function handleMouseMove(e) {
+  if (isMouseDown) {
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+
+    updatePlayerDirection(mouseX, mouseY);
+  }
+}
+
+function handleMouseUp(e) {
+  isMouseDown = false;
   keys.ArrowUp = false;
   keys.ArrowDown = false;
   keys.ArrowLeft = false;
@@ -113,6 +145,9 @@ function updatePlayerDirection(x, y) {
 
 let currentLevel = 1;
 let newBulletMilliseconds = 1000; // Level 1
+if (/Mobi|Android/i.test(navigator.userAgent)) {
+  newBulletMilliseconds = newBulletMilliseconds / 2;
+}
 
 function startLevel() {
   playerPos = { x: 50, y: 50 };
@@ -211,6 +246,10 @@ function gameLoop(timestamp) {
         newBulletMilliseconds = 230;
       }
 
+      if (/Mobi|Android/i.test(navigator.userAgent)) {
+        newBulletMilliseconds = newBulletMilliseconds / 2;
+      }
+
       startLevel(); // Show level name
     }
   }
@@ -265,6 +304,9 @@ function showRestartButton() {
     lastBulletTime = 0;
     currentLevel = 1; // Reset to level 1
     newBulletMilliseconds = 1000; // Reset bullet interval
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      newBulletMilliseconds = newBulletMilliseconds / 2;
+    }
     resizeCanvas(); // Reset canvas size if needed
     restartButton.remove();
     startLevel();
@@ -277,9 +319,9 @@ window.addEventListener('resize', resizeCanvas);
 canvas.addEventListener('touchstart', handleTouchStart);
 canvas.addEventListener('touchmove', handleTouchMove);
 canvas.addEventListener('touchend', handleTouchEnd);
-canvas.addEventListener('mousedown', handleTouchStart);
-canvas.addEventListener('mousemove', handleTouchMove);
-canvas.addEventListener('mouseup', handleTouchEnd);
+canvas.addEventListener('mousedown', handleMouseDown);
+canvas.addEventListener('mousemove', handleMouseMove);
+canvas.addEventListener('mouseup', handleMouseUp);
 
 resizeCanvas();
 startLevel();
