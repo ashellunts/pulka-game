@@ -146,7 +146,7 @@ let currentLevel = 1;
 let newBulletMilliseconds = 1000; // Level 1
 
 if (navigator.userAgentData && navigator.userAgentData.mobile) {
-  newBulletMilliseconds = newBulletMilliseconds / 4;
+  newBulletMilliseconds = newBulletMilliseconds * 3;
 }
 
 function startLevel() {
@@ -255,7 +255,7 @@ function gameLoop(timestamp) {
       }
 
       if (navigator.userAgentData && navigator.userAgentData.mobile) {
-        newBulletMilliseconds = newBulletMilliseconds / 4;
+        newBulletMilliseconds = newBulletMilliseconds * 3;
       }
 
       startLevel(); // Show level name
@@ -322,7 +322,7 @@ function showRestartButton() {
     currentLevel = 1; // Reset to level 1
     newBulletMilliseconds = 1000; // Reset bullet interval
     if (navigator.userAgentData && navigator.userAgentData.mobile) {
-      newBulletMilliseconds = newBulletMilliseconds / 4;
+      newBulletMilliseconds = newBulletMilliseconds * 3;
     }
     resizeCanvas(); // Reset canvas size if needed
     restartButton.remove();
