@@ -145,9 +145,6 @@ function updatePlayerDirection(x, y) {
 
 let currentLevel = 1;
 let newBulletMilliseconds = 1000; // Level 1
-if (/Mobi|Android/i.test(navigator.userAgent)) {
-  newBulletMilliseconds = newBulletMilliseconds / 2;
-}
 
 function startLevel() {
   playerPos = { x: 50, y: 50 };
@@ -170,7 +167,11 @@ function gameLoop(timestamp) {
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
 
   // Update player position based on keys pressed
-  const speed = 5;
+  let speed = 5;
+  if (/Mobi|Android/i.test(navigator.userAgent)) {
+    speed = 2.5; // Reduce speed by 2x on mobile
+  }
+
   if (keys.ArrowUp) {
     playerPos.y = Math.max(0, playerPos.y - speed);
   }
@@ -246,10 +247,6 @@ function gameLoop(timestamp) {
         newBulletMilliseconds = 230;
       }
 
-      if (/Mobi|Android/i.test(navigator.userAgent)) {
-        newBulletMilliseconds = newBulletMilliseconds / 2;
-      }
-
       startLevel(); // Show level name
     }
   }
@@ -261,6 +258,12 @@ function gameLoop(timestamp) {
     ctx.fillText('Press (r) to restart the game', canvasSize.width / 2 - 170, canvasSize.height / 2 + 40);
     showRestartButton();
   }
+
+  // Display user agent and newBulletMilliseconds value
+  ctx.fillStyle = 'black';
+  ctx.font = '16px Arial';
+  ctx.fillText(`User Agent: ${navigator.userAgent}`, 10, canvasSize.height - 40);
+  ctx.fillText(`Bullet Interval: ${newBulletMilliseconds} ms`, 10, canvasSize.height - 20);
 
   if (!gameWon && !gameLost && !waitforNextLevel) {
     requestAnimationFrame(gameLoop);
@@ -304,9 +307,6 @@ function showRestartButton() {
     lastBulletTime = 0;
     currentLevel = 1; // Reset to level 1
     newBulletMilliseconds = 1000; // Reset bullet interval
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-      newBulletMilliseconds = newBulletMilliseconds / 2;
-    }
     resizeCanvas(); // Reset canvas size if needed
     restartButton.remove();
     startLevel();

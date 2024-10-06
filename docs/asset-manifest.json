@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/pulka-game/static/js/main.835cdbaf.js",
+    "main.js": "/pulka-game/static/js/main.8a8ac231.js",
     "index.html": "/pulka-game/index.html",
-    "main.835cdbaf.js.map": "/pulka-game/static/js/main.835cdbaf.js.map"
+    "main.8a8ac231.js.map": "/pulka-game/static/js/main.8a8ac231.js.map"
   },
   "entrypoints": [
-    "static/js/main.835cdbaf.js"
+    "static/js/main.8a8ac231.js"
   ]
 }
