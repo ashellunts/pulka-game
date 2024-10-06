@@ -150,6 +150,8 @@ if (navigator.userAgentData && navigator.userAgentData.mobile) {
 }
 
 function startLevel() {
+  isTouching = false;
+  isMouseDown = false;
   playerPos = { x: 50, y: 50 };
   bullets = [];
   gameWon = false;
