@@ -53,32 +53,6 @@ function resizeCanvas() {
 }
 
 function handleKeyDown(e) {
-  if (gameWon || gameLost) {
-    if (e.key === 'r') {
-      // Restart the game
-      playerPos = { x: 50, y: 50 };
-      bullets = [];
-      gameWon = false;
-      gameLost = false;
-      lastBulletTime = 0;
-      currentLevel = 1; // Reset to level 1
-      newBulletMilliseconds = 1000; // Reset bullet interval
-      resizeCanvas(); // Reset canvas size if needed
-      requestAnimationFrame(gameLoop); // Restart the game loop
-      return;
-    }
-  }
-
-  if (waitforNextLevel) {
-    if (e.key === 's' && currentLevel <= levelCount) {
-      waitforNextLevel = false;
-      startLevel();
-      requestAnimationFrame(gameLoop);
-      return;
-    }
-    return;
-  }
-
   if (keys.hasOwnProperty(e.key)) {
     keys[e.key] = true;
   }
@@ -88,6 +62,31 @@ function handleKeyUp(e) {
   if (keys.hasOwnProperty(e.key)) {
     keys[e.key] = false;
   }
+}
+
+function handleTouchStart(e) {
+  const touch = e.touches[0];
+  const touchX = touch.clientX;
+  const touchY = touch.clientY;
+
+  if (touchY < playerPos.y) {
+    keys.ArrowUp = true;
+  } else if (touchY > playerPos.y + playerHeight) {
+    keys.ArrowDown = true;
+  }
+
+  if (touchX < playerPos.x) {
+    keys.ArrowLeft = true;
+  } else if (touchX > playerPos.x + playerWidth) {
+    keys.ArrowRight = true;
+  }
+}
+
+function handleTouchEnd(e) {
+  keys.ArrowUp = false;
+  keys.ArrowDown = false;
+  keys.ArrowLeft = false;
+  keys.ArrowRight = false;
 }
 
 let currentLevel = 1;
@@ -101,8 +100,8 @@ function startLevel() {
   lastBulletTime = 0;
   ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
   ctx.fillStyle = 'black';
-  ctx.font = '80px Arial';
-  ctx.fillText('Pulka', canvasSize.width / 2 - 120, 100);
+  ctx.font = '40px Arial';
+  ctx.fillText('Pulka', canvasSize.width / 2 - 50, canvasSize.height / 2 - 60);
   ctx.font = '30px Arial';
   ctx.fillText(`Level ${currentLevel}`, canvasSize.width / 2 - 70, canvasSize.height / 2);
   ctx.font = '20px Arial';
@@ -176,6 +175,7 @@ function gameLoop(timestamp) {
       // Game completed
       ctx.fillText('You Win! 🎉', canvasSize.width / 2 - 70, canvasSize.height / 2);
       ctx.fillText('Press (r) to restart the game', canvasSize.width / 2 - 170, canvasSize.height / 2 + 40);
+      showRestartButton();
     } else {
 
       if (currentLevel === 2) {
@@ -197,6 +197,7 @@ function gameLoop(timestamp) {
     ctx.font = '30px Arial';
     ctx.fillText('You Lose! 💥', canvasSize.width / 2 - 70, canvasSize.height / 2);
     ctx.fillText('Press (r) to restart the game', canvasSize.width / 2 - 170, canvasSize.height / 2 + 40);
+    showRestartButton();
   }
 
   if (!gameWon && !gameLost && !waitforNextLevel) {
@@ -204,9 +205,56 @@ function gameLoop(timestamp) {
   }
 }
 
+function showStartButton() {
+  const startButton = document.createElement('button');
+  startButton.innerText = 'Start Level';
+  startButton.style.position = 'absolute';
+  startButton.style.left = '50%';
+  startButton.style.top = '50%';
+  startButton.style.transform = 'translate(-50%, -50%)';
+  startButton.style.padding = '10px 20px';
+  startButton.style.fontSize = '20px';
+  document.body.appendChild(startButton);
+
+  startButton.addEventListener('click', () => {
+    waitforNextLevel = false;
+    startButton.remove();
+    startLevel();
+    requestAnimationFrame(gameLoop);
+  });
+}
+
+function showRestartButton() {
+  const restartButton = document.createElement('button');
+  restartButton.innerText = 'Restart Game';
+  restartButton.style.position = 'absolute';
+  restartButton.style.left = '50%';
+  restartButton.style.top = '60%';
+  restartButton.style.transform = 'translate(-50%, -50%)';
+  restartButton.style.padding = '10px 20px';
+  restartButton.style.fontSize = '20px';
+  document.body.appendChild(restartButton);
+
+  restartButton.addEventListener('click', () => {
+    playerPos = { x: 50, y: 50 };
+    bullets = [];
+    gameWon = false;
+    gameLost = false;
+    lastBulletTime = 0;
+    currentLevel = 1; // Reset to level 1
+    newBulletMilliseconds = 1000; // Reset bullet interval
+    resizeCanvas(); // Reset canvas size if needed
+    restartButton.remove();
+    requestAnimationFrame(gameLoop); // Restart the game loop
+  });
+}
+
 window.addEventListener('keydown', handleKeyDown);
 window.addEventListener('keyup', handleKeyUp);
 window.addEventListener('resize', resizeCanvas);
+canvas.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchend', handleTouchEnd);
 
 resizeCanvas();
 startLevel();
+showStartButton();
