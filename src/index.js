@@ -106,6 +106,7 @@ function startLevel() {
   ctx.fillText(`Level ${currentLevel}`, canvasSize.width / 2 - 70, canvasSize.height / 2);
   ctx.font = '20px Arial';
   ctx.fillText('Press (s) to start the level', canvasSize.width / 2 - 125, canvasSize.height / 2 + 40);
+  showStartButton();
 }
 
 function gameLoop(timestamp) {
@@ -219,7 +220,6 @@ function showStartButton() {
   startButton.addEventListener('click', () => {
     waitforNextLevel = false;
     startButton.remove();
-    startLevel();
     requestAnimationFrame(gameLoop);
   });
 }
@@ -245,7 +245,7 @@ function showRestartButton() {
     newBulletMilliseconds = 1000; // Reset bullet interval
     resizeCanvas(); // Reset canvas size if needed
     restartButton.remove();
-    requestAnimationFrame(gameLoop); // Restart the game loop
+    startLevel();
   });
 }
 
@@ -257,4 +257,3 @@ canvas.addEventListener('touchend', handleTouchEnd);
 
 resizeCanvas();
 startLevel();
-showStartButton();
