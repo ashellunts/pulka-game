@@ -65,21 +65,19 @@ function handleKeyUp(e) {
 }
 
 function handleTouchStart(e) {
-  const touch = e.touches[0];
+  const touch = e.touches ? e.touches[0] : e;
   const touchX = touch.clientX;
   const touchY = touch.clientY;
 
-  if (touchY < playerPos.y) {
-    keys.ArrowUp = true;
-  } else if (touchY > playerPos.y + playerHeight) {
-    keys.ArrowDown = true;
-  }
+  updatePlayerDirection(touchX, touchY);
+}
 
-  if (touchX < playerPos.x) {
-    keys.ArrowLeft = true;
-  } else if (touchX > playerPos.x + playerWidth) {
-    keys.ArrowRight = true;
-  }
+function handleTouchMove(e) {
+  const touch = e.touches ? e.touches[0] : e;
+  const touchX = touch.clientX;
+  const touchY = touch.clientY;
+
+  updatePlayerDirection(touchX, touchY);
 }
 
 function handleTouchEnd(e) {
@@ -87,6 +85,30 @@ function handleTouchEnd(e) {
   keys.ArrowDown = false;
   keys.ArrowLeft = false;
   keys.ArrowRight = false;
+}
+
+function updatePlayerDirection(x, y) {
+  if (y < playerPos.y) {
+    keys.ArrowUp = true;
+    keys.ArrowDown = false;
+  } else if (y > playerPos.y + playerHeight) {
+    keys.ArrowDown = true;
+    keys.ArrowUp = false;
+  } else {
+    keys.ArrowUp = false;
+    keys.ArrowDown = false;
+  }
+
+  if (x < playerPos.x) {
+    keys.ArrowLeft = true;
+    keys.ArrowRight = false;
+  } else if (x > playerPos.x + playerWidth) {
+    keys.ArrowRight = true;
+    keys.ArrowLeft = false;
+  } else {
+    keys.ArrowLeft = false;
+    keys.ArrowRight = false;
+  }
 }
 
 let currentLevel = 1;
@@ -253,7 +275,11 @@ window.addEventListener('keydown', handleKeyDown);
 window.addEventListener('keyup', handleKeyUp);
 window.addEventListener('resize', resizeCanvas);
 canvas.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchmove', handleTouchMove);
 canvas.addEventListener('touchend', handleTouchEnd);
+canvas.addEventListener('mousedown', handleTouchStart);
+canvas.addEventListener('mousemove', handleTouchMove);
+canvas.addEventListener('mouseup', handleTouchEnd);
 
 resizeCanvas();
 startLevel();
