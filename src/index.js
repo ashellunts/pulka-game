@@ -26,15 +26,14 @@ playerImage.src = '/pulka-game/player.jpg';
 
 // Load bullet image
 const bulletImage = new Image();
-bulletImage.src = '/pulka-game/bullet.png';
-
 const finishImage = new Image();
+bulletImage.src = '/pulka-game/bullet.png';
 finishImage.src = '/pulka-game/finish.png';
 
 // Calculate new dimensions
 const originalWidth = 520;
 const originalHeight = 900;
-const scaleFactor = 1/25;
+const scaleFactor = 1 / 25;
 const playerWidth = originalWidth * scaleFactor;
 const playerHeight = originalHeight * scaleFactor;
 
@@ -43,7 +42,7 @@ const keys = {
   ArrowUp: false,
   ArrowDown: false,
   ArrowLeft: false,
-  ArrowRight: false
+  ArrowRight: false,
 };
 
 let isTouching = false;
@@ -146,6 +145,10 @@ function updatePlayerDirection(x, y) {
 let currentLevel = 1;
 let newBulletMilliseconds = 1000; // Level 1
 
+if (navigator.userAgentData.mobile) {
+  newBulletMilliseconds = newBulletMilliseconds / 2;
+}
+
 function startLevel() {
   playerPos = { x: 50, y: 50 };
   bullets = [];
@@ -168,9 +171,6 @@ function gameLoop(timestamp) {
 
   // Update player position based on keys pressed
   let speed = 5;
-  if (/Mobi|Android/i.test(navigator.userAgent)) {
-    speed = 2.5; // Reduce speed by 2x on mobile
-  }
 
   if (keys.ArrowUp) {
     playerPos.y = Math.max(0, playerPos.y - speed);
@@ -206,12 +206,16 @@ function gameLoop(timestamp) {
     lastBulletTime = timestamp;
   }
   // Draw and update bullets
-  bullets = bullets.filter(bullet => {
+  bullets = bullets.filter((bullet) => {
     ctx.drawImage(bulletImage, bullet.x, bullet.y, 20, 5);
 
     // Check collision with player
-    if (bullet.x <= playerPos.x + playerWidth && bullet.x + 20 >= playerPos.x &&
-        bullet.y <= playerPos.y + playerHeight && bullet.y + 5 >= playerPos.y) {
+    if (
+      bullet.x <= playerPos.x + playerWidth &&
+      bullet.x + 20 >= playerPos.x &&
+      bullet.y <= playerPos.y + playerHeight &&
+      bullet.y + 5 >= playerPos.y
+    ) {
       gameLost = true;
     }
 
@@ -220,23 +224,24 @@ function gameLoop(timestamp) {
   });
 
   // Check win condition
-  if (playerPos.x + playerWidth > canvasSize.width - goalWidth &&
-      playerPos.y + playerHeight > (canvasSize.height - goalHeight) / 2 &&
-      playerPos.y < (canvasSize.height + goalHeight) / 2) {
+  if (
+    playerPos.x + playerWidth > canvasSize.width - goalWidth &&
+    playerPos.y + playerHeight > (canvasSize.height - goalHeight) / 2 &&
+    playerPos.y < (canvasSize.height + goalHeight) / 2
+  ) {
     gameWon = true;
   }
 
   if (gameWon) {
     waitforNextLevel = true;
     currentLevel = currentLevel + 1;
-    console.log("currentLevel", currentLevel);
+    console.log('currentLevel', currentLevel);
     if (currentLevel > levelCount) {
       // Game completed
       ctx.fillText('You Win! 🎉', canvasSize.width / 2 - 70, canvasSize.height / 2);
       ctx.fillText('Press (r) to restart the game', canvasSize.width / 2 - 170, canvasSize.height / 2 + 40);
       showRestartButton();
     } else {
-
       if (currentLevel === 2) {
         newBulletMilliseconds = 500;
       } else if (currentLevel === 3) {
@@ -245,6 +250,10 @@ function gameLoop(timestamp) {
         newBulletMilliseconds = 250;
       } else if (currentLevel === 5) {
         newBulletMilliseconds = 230;
+      }
+
+      if (navigator.userAgentData.mobile) {
+        newBulletMilliseconds = newBulletMilliseconds / 2;
       }
 
       startLevel(); // Show level name
@@ -285,6 +294,9 @@ function showStartButton() {
     waitforNextLevel = false;
     startButton.remove();
     requestAnimationFrame(gameLoop);
+    if (navigator.userAgentData.mobile) {
+      requestFullscreen();
+    }
   });
 }
 
@@ -307,10 +319,25 @@ function showRestartButton() {
     lastBulletTime = 0;
     currentLevel = 1; // Reset to level 1
     newBulletMilliseconds = 1000; // Reset bullet interval
+    if (navigator.userAgentData.mobile) {
+      newBulletMilliseconds = newBulletMilliseconds / 2;
+    }
     resizeCanvas(); // Reset canvas size if needed
     restartButton.remove();
     startLevel();
   });
+}
+
+function requestFullscreen() {
+  if (canvas.requestFullscreen) {
+    canvas.requestFullscreen();
+  } else if (canvas.mozRequestFullScreen) {
+    canvas.mozRequestFullScreen();
+  } else if (canvas.webkitRequestFullscreen) {
+    canvas.webkitRequestFullscreen();
+  } else if (canvas.msRequestFullscreen) {
+    canvas.msRequestFullscreen();
+  }
 }
 
 window.addEventListener('keydown', handleKeyDown);
